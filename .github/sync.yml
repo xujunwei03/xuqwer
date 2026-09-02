@@ -1,0 +1,29 @@
+name: Sync Jiandaoyun to Git
+
+on:
+  repository_dispatch:
+    types: [jdy_update] # 自定义的事件类型
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install axios
+
+      - name: Run Sync Script
+        env:
+          JDY_APP_ID: ${{ secrets.JDY_APP_ID }}
+          JDY_SECRET_KEY: ${{ secrets.JDY_SECRET_KEY }}
+          JDY_ENTRY_ID: ${{ secrets.JDY_ENTRY_ID }}
+        run: node sync_script.js
